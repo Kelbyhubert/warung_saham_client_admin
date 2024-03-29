@@ -1,21 +1,48 @@
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow , TablePagination, IconButton , tableCellClasses, Toolbar, Paper, Button } from '@mui/material';
-import {styled} from '@mui/material/styles';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Table, TableBody, TableContainer, TableHead, TableRow , TablePagination, IconButton , Toolbar, Paper, Button, Typography, Divider, InputBase } from '@mui/material';
+import {alpha, styled} from '@mui/material/styles';
 import SettingsIcon from '@mui/icons-material/Settings';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { getAllUser } from '../../services/User/UserService';
 import { useNavigate } from 'react-router-dom';
+import { StyledTableCell } from '../../components/custom/table/CTable'
+import SearchIcon from '@mui/icons-material/Search';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.secondary.main,
-      color: theme.palette.common.white,
+
+const Search = styled('div')(({ theme }) => ({
+position: 'relative',
+borderRadius: theme.shape.borderRadius,
+backgroundColor: alpha(theme.palette.common.white, 0.15),
+'&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+},
+marginLeft: 0,
+width: '100%',
+[theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+},
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+padding: theme.spacing(0, 2),
+height: '100%',
+position: 'absolute',
+pointerEvents: 'none',
+display: 'flex',
+alignItems: 'center',
+justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: 'inherit',
+    width: '100%',
+    '& .MuiInputBase-input': {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
+}));
+
 
 const dummyData = [
     {username: "horizon", email: "email", phoneNumber: "0812921819"},
@@ -42,10 +69,10 @@ const UserManagement = () => {
 
     const navigate = useNavigate();
 
-    const [userList, setuserList] = useState(dummyData);
-    const [page, setPage] = useState(0);
-    const [rowPerPage, setRowPerPage] = useState(5);
-    const [totalData, setTotalData] = useState(0);
+    const [userList, setuserList] = React.useState(dummyData);
+    const [page, setPage] = React.useState(0);
+    const [rowPerPage, setRowPerPage] = React.useState(5);
+    const [totalData, setTotalData] = React.useState(0);
 
     const header = [
         {id: "index", label: "NO"},
@@ -66,7 +93,7 @@ const UserManagement = () => {
     }
 
     const actionHandler = (type,id) => {
-        if(type === "view"){
+        if(type === "setting"){
             return navigate("" + id);
         }
 
@@ -74,18 +101,11 @@ const UserManagement = () => {
             return navigate("add-user");
         }
 
-        if(type === "delete"){
-            console.log("tes");
-        }
-
     }
 
     const actionTemplate = (data) => (
         <Box>
-            <IconButton onClick={() => actionHandler("view",data.userId)}>
-                <VisibilityIcon />
-            </IconButton>
-            <IconButton>
+            <IconButton onClick={() => actionHandler("setting",data.userId)}>
                 <SettingsIcon />
             </IconButton>
         </Box>
@@ -103,7 +123,23 @@ const UserManagement = () => {
 
   return (
     <Box>
+        <Typography variant='h3' component="h2">
+            USER MANAGEMENT
+        </Typography>
+        <Divider/>
         <Toolbar>
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}/>    
+            <Search>
+                <SearchIconWrapper>
+                    <SearchIcon />
+                </SearchIconWrapper>
+
+                <StyledInputBase
+                placeholder="Search..."
+                inputProps={{ 'aria-label': 'search', }}
+                />
+            </Search>
+            
             <Button
                 onClick={() => actionHandler("add",null)}
                 variant='contained'
@@ -123,27 +159,28 @@ const UserManagement = () => {
                             ))}
                         </TableRow>
                     </TableHead>
-                <TableBody>
-                    {userList.map((data,index) => (
-                        <TableRow key={index} >
-                            <StyledTableCell >
-                                {index + 1 + (page * rowPerPage)}
-                            </StyledTableCell>
-                            <StyledTableCell >
-                                {data?.username}
-                            </StyledTableCell>
-                            <StyledTableCell >
-                                {data?.email}
-                            </StyledTableCell>
-                            <StyledTableCell >
-                                {data?.phoneNumber}
-                            </StyledTableCell>
-                            <StyledTableCell >
-                                {actionTemplate(data)}
-                            </StyledTableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
+                    <TableBody>
+                        {userList.map((data,index) => (
+                            <TableRow key={index} >
+                                <StyledTableCell >
+                                    {index + 1 + (page * rowPerPage)}
+                                </StyledTableCell>
+                                <StyledTableCell >
+                                    {data?.username}
+                                </StyledTableCell>
+                                <StyledTableCell >
+                                    {data?.email}
+                                </StyledTableCell>
+                                <StyledTableCell >
+                                    {data?.phoneNumber}
+                                </StyledTableCell>
+                                <StyledTableCell >
+                                    {actionTemplate(data)}
+                                </StyledTableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                    
                 </Table>
             </TableContainer>
             <TablePagination 

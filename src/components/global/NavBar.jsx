@@ -1,13 +1,16 @@
 import { AppBar, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
 import AccountCircle from '@mui/icons-material/AccountCircle';
+
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/Auth/AuthContext';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../redux/auth/slice/AuthSlice';
+// import { useAuth } from '../../context/Auth/AuthContext';
 
 const NavBar = () => {
-  const {logout} = useAuth();
+  // const {logout} = useAuth();
+  const dispatch = useDispatch();
   const [archorEl, setArchorEl] = useState(null);
-
   const navigate = useNavigate();
   
   const handleClose = () => {
@@ -21,7 +24,7 @@ const NavBar = () => {
   const logoutHandler = () => {
     localStorage.removeItem("TOKEN");
     setArchorEl(null);
-    logout();
+    dispatch(logout());
     return navigate("/login");
   }
 

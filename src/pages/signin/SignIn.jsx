@@ -1,34 +1,31 @@
 import { Box, Button, Divider, Grid, Paper, TextField, Typography} from '@mui/material'
 import AdminPanelSettingsTwoToneIcon from '@mui/icons-material/AdminPanelSettingsTwoTone';
-import React, { useState } from 'react'
-import { useAuth } from '../../context/Auth/AuthContext';
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { loginAction } from '../../redux/auth/actions/AuthActions';
 import { useNavigate } from 'react-router-dom';
-import { authenticate } from '../../services/Auth/AuthService';
-import jwt_decode from 'jwt-decode';
 
 const SignIn = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-
-    const {setUser} = useAuth();
 
     const navigate = useNavigate();
 
+    const [username, setUsername] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
+    const message = useSelector((state) => state.auth.message);
+    const dispatch = useDispatch();
+
+
     const submitHandler = async (e) => {
         e.preventDefault();
-
-        const res = await authenticate(username,password);
-        
-        if(res.status == 200){
-            localStorage.setItem("TOKEN", `Bearer ${res.data.token}`);
-            const data = jwt_decode(res.data.token)
-            setUser(data);
-            navigate("/");
-        }else{
-            setUsername("");
-            setPassword("");
+        try{
+            await dispatch(loginAction({username,password}));
+            navigate('/')
+        }catch(e){
+            setUsername('');
+            setPassword('');
         }
-
+        
     }
 
   return (
@@ -37,7 +34,7 @@ const SignIn = () => {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor:"#504099",
-        minHeight: 720,
+        minHeight: "100vh",
     }}>
         <Box sx={{
             margin: "2em 0em 2em 0em",
@@ -49,6 +46,9 @@ const SignIn = () => {
                         <AdminPanelSettingsTwoToneIcon/>
                         <Typography variant='h4' padding={2}>
                             ADMIN LOGIN
+                        </Typography>
+                        <Typography variant='h6' padding={2}>
+                            {message}
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>

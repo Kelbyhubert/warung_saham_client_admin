@@ -1,5 +1,7 @@
 import jwtDecode from "jwt-decode";
 import { createContext, useContext , useEffect, useState } from "react";
+import Proptypes from 'prop-types';
+
 
 const AuthContext = createContext();
 
@@ -7,8 +9,8 @@ export const useAuth = () => {
   return useContext(AuthContext);
 }
 
-export const AuthProvider = ({children}) => {
-  const [user, setUser] = useState(null);
+export const AuthProvider = (props) => {
+  const [user, setUser] = useState(''); 
 
   useEffect(() => {
     const token = localStorage.getItem("TOKEN");
@@ -24,7 +26,11 @@ export const AuthProvider = ({children}) => {
 
   return (
     <AuthContext.Provider value={{user,setUser,logout}}>
-      {children}
+      {props.children}
     </AuthContext.Provider>
   )
+}
+
+AuthProvider.propTypes = {
+  children: Proptypes.node.isRequired
 }

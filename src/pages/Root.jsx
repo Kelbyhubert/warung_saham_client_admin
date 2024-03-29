@@ -5,21 +5,32 @@ import Footer from '../components/global/Footer'
 import { Outlet } from 'react-router-dom'
 import { Box } from '@mui/material'
 
+
 const Root = () => {
     return (
         <>
             <NavBar />
-
             <Box sx={{
                 width: `calc(100% - 300px)`, ml: `300px`,
                 bgcolor: (theme) => theme.palette.background.main
             }}>
                 <Sidebar/>
                 <Box sx={{
-                    marginTop: 8,
-                    minHeight: 650
+                    marginLeft: 4,
+                    marginRight: 4,
+                    paddingTop: 12,
+                    minHeight: "90vh"
                 }}>
-                    <Outlet />
+                    <Box sx={{borderRadius: '16px' ,bgcolor: 'background.paper',}}>
+                        <Box sx={{
+                            marginLeft: 4,
+                            marginRight: 4,
+                            paddingBottom: 4,
+                            paddingTop: 4,
+                        }}>
+                            <Outlet />
+                        </Box> 
+                    </Box>
                 </Box>
                 <Footer />
             </Box>

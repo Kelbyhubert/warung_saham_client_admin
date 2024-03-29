@@ -11,11 +11,16 @@ import ErrorPage from './pages/error/ErrorPage';
 import SignIn from './pages/signin/SignIn';
 import { checkAuthToken } from './utils/auth/AuthUtils';
 import UserManagement from './pages/user-management/UserManagement';
-import UserView from './pages/user-management/UserView';
+import UserSetting from './pages/user-management/user-setting/UserSetting';
 import NotFoundPage from './pages/error/NotFoundPage';
 import AddUserForm from './pages/user-management/AddUserForm';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs'
+import Rekom from './pages/saham/rekom/Rekom';
+import CreateRekomForm from './pages/saham/rekom/form/CreateRekomForm';
+import EditRekomForm from './pages/saham/rekom/form/EditRekomForm';
+import Stock from './pages/saham/stock/Stock';
+import { useDispatch } from 'react-redux';
 
 const theme = createTheme({
   palette: {
@@ -26,7 +31,7 @@ const theme = createTheme({
       main: '#98BDFF',
     },
     background: {
-      main: '#F5F7FF'
+      main: '#d5d7e0'
     }
   },
   components:{
@@ -59,43 +64,63 @@ const theme = createTheme({
 
 function App() {
 
-
+  const dispatch = useDispatch();
   const router = createBrowserRouter([
     { 
       path: '/',
       element: <Root/>,
       errorElement: <ErrorPage /> ,
-      loader: checkAuthToken,
+      loader: checkAuthToken(dispatch),
       children: [
         {
           path: "dashboard",
           element: <Dashboard />,
-          loader: checkAuthToken,
+          loader: checkAuthToken(dispatch),
         },
         {
-          path: "saham",
-          element: <Dashboard />,
-          loader: checkAuthToken,
+          path: "saham/rekom",
+          element: <Rekom />,
+          loader: checkAuthToken(dispatch),
+        },
+        {
+          path: "saham/rekom/create",
+          element: <CreateRekomForm/>,
+          loader: checkAuthToken(dispatch)
+        },
+        {
+          path: "saham/rekom/:id/edit",
+          element: <EditRekomForm/>,
+          loader: checkAuthToken(dispatch)
+        },
+        {
+          path: "saham/stock",
+          element: <Stock />,
+          loader: checkAuthToken(dispatch),
+        },
+        {
+          path: "saham/stock/:id/edit",
+          element: <EditRekomForm/>,
+          loader: checkAuthToken(dispatch)
         },
         {
           path: "insight",
           element: <Dashboard />,
-          loader: checkAuthToken,
+          loader: checkAuthToken(dispatch),
         },
         {
           path: "user-management",
           element: <UserManagement />,
-          loader: checkAuthToken,
+          loader: checkAuthToken(dispatch),
         },
         {
           path: "user-management/:userId",
-          element: <UserView />,
+          element: <UserSetting />,
           loader: checkAuthToken,
         },
         {
           path: "user-management/add-user",
           element: <AddUserForm />,
-          loader: checkAuthToken,
+          loader: checkAuthToken(dispatch),
         },
         {
           path: '*',

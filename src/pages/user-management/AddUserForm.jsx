@@ -1,34 +1,31 @@
-import { Box, Button, Checkbox, Chip, Grid, ListItemText, MenuItem, Paper, Select, Stack, TextField, Toolbar, Typography, useTheme } from '@mui/material'
+import { Box, Button, Checkbox, Chip, Grid, ListItemText, MenuItem, Paper, Select, Stack, TextField, Toolbar, Typography } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { getAllRole } from '../../services/role/Role';
 import { addNewUser } from '../../services/User/UserService';
 import { useNavigate } from 'react-router-dom';
 
+// eslint-disable-next-line no-useless-escape
 const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 const AddUserForm = () => {
-
-  const theme =  useTheme();
   const navigate = useNavigate();
 
+  const [username, setUsername] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [name, setName] = React.useState('');
+  const [phoneNumber, setPhoneNumber] = React.useState('');
+  const [dob, setDob] = React.useState("");
+  const [roles, setRoles] = React.useState([]);
 
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [dob, setDob] = useState("");
-  const [roles, setRoles] = useState([]);
 
+  const [roleList, setRoleList] = React.useState([]);
 
-  const [roleList, setRoleList] = useState([]);
-
-  const [usernameInvalid,setUsernameInvalid] = useState({inValid: false ,message : ""});
-  const [emailInvalid,setEmailInvalid] = useState({inValid: false ,message : ""});
-  const [nameInvalid,setNameInvalid] = useState({inValid: false ,message : ""});
-  const [phoneNumberInvalid,setPhoneNumberInvalid] = useState({inValid: false ,message : ""});
-  const [dobInvalid,setDobInvalid] = useState({inValid: false ,message : ""});
-  const [rolesInvalid,setRolesInvalid] = useState({inValid: false ,message : ""});
+  const [usernameInvalid,setUsernameInvalid] = React.useState({inValid: false ,message : ""});
+  const [emailInvalid,setEmailInvalid] = React.useState({inValid: false ,message : ""});
+  const [nameInvalid,setNameInvalid] = React.useState({inValid: false ,message : ""});
+  const [phoneNumberInvalid,setPhoneNumberInvalid] = React.useState({inValid: false ,message : ""});
+  const [dobInvalid,setDobInvalid] = React.useState({inValid: false ,message : ""});
   // const [valid,setValid] = useState(false);
 
   const usernameInputHandler = (e) => {
@@ -126,24 +123,17 @@ const AddUserForm = () => {
 
 
   return (
-    <>
-      <Box sx={{
-        margin: 2
-      }}>
-        <Toolbar />
-        <Paper component="form" onSubmit={submitHandler}>
-          <Grid container xs={12} direction="column">
-              <Box sx={
-                {
-                  borderRadius: "5px",
-                  bgcolor: theme.palette.primary.main,
-                  color: 'white' 
-                }
-              }>
-              <Typography variant='h5' padding={2}>
-                    Create New Admin
+    <Box>
+        <Toolbar>
+          <Box>
+              <Typography variant='h4' padding={2}>
+                    Create New User
                 </Typography>
               </Box>
+          </Toolbar>
+        <Paper component="form" onSubmit={submitHandler}>
+          <Grid container xs={12} direction="column">
+
           </Grid>
           <Grid container spacing={2} padding={4}>
 
@@ -270,7 +260,11 @@ const AddUserForm = () => {
               />
             </Grid>
 
-            <Grid item xs={10}>
+            <Grid item xs={8}/>
+            <Grid item xs={2}>
+                <Button onClick={() => navigate("/user-management")} variant='contained' color='secondary' fullWidth>
+                  Back
+                </Button>
             </Grid>
             <Grid item xs={2}>
                 <Button type='submit' variant='contained' color='secondary' fullWidth>
@@ -280,7 +274,6 @@ const AddUserForm = () => {
           </Grid>
         </Paper>
       </Box>
-    </>
   )
 }
 

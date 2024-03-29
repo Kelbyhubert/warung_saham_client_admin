@@ -1,33 +1,83 @@
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, useTheme } from '@mui/material'
+import { Collapse, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, useTheme } from '@mui/material'
 import React, { useState } from 'react'
 import CNavLink from '../custom/navlink/CNavLink';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 const Sidebar = () => {
 
     const theme = useTheme();
 
     const dummyMenu = [
-        {id: 1, name: "Dashboard" , url: 'dashboard'},
-        {id: 2, name: "Saham", url: 'saham'},
-        {id: 3, name: "Insight", url: 'insight'},
-        {id: 4, name: "User Management" , url: 'user-management'}
+        {id: 1, name: "Dashboard" , url: 'dashboard', child: []},
+        {id: 2, name: "Saham", url: null, child: [
+            {id: 1, name: "Rekom" , url: 'saham/rekom', child: []},
+            {id: 2, name: "Stock" , url: 'saham/stock', child: []},
+        ]},
+        {id: 3, name: "Insight", url: 'insight', child: []},
+        {id: 4, name: "User Management" , url: 'user-management', child: []}
     ];
 
     const [menuList, setMenuList] = useState(dummyMenu);
+    const [openMenuId,setOpenMenuId] = useState(-1);
+
+    const handleClickMenu = (index) => {
+        if(index === openMenuId){
+            setOpenMenuId(-1);
+        }else{
+            setOpenMenuId(index);
+        }
+    }
 
 
     const listMenu = (list) => {
-        return list.map((data) => (
-                <ListItem key={data.id}>
-                    <ListItemButton 
-                        LinkComponent={CNavLink} 
-                        to={data.url}
-                    >
-                        <ListItemText primary={data.name} />
-                    </ListItemButton>
-                </ListItem>
+        return list.map((data) => {
+            if(data.url !== null){
+                return (
+                    <ListItem key={data.id}>
+                        <ListItemButton 
+                            LinkComponent={CNavLink} 
+                            to={data.url}
+                            onClick={() => handleClickMenu(-1)}
+                        >
+                            <ListItemText primary={data.name} />
+                        </ListItemButton>
+                    </ListItem>
+                )
+            }else{
+                return (
+                    <>
+                        <ListItem key={data.id}>
+                            <ListItemButton LinkComponent={CNavLink} onClick={() => handleClickMenu(data.id)}>
+                                <ListItemText primary={data.name}/>
+                                {openMenuId === data.id ? <ExpandMore/> : <ExpandLess/>}
+                            </ListItemButton>
+                        </ListItem>
+                        <Collapse in={openMenuId === data.id} timeout="auto" unmountOnExit>
+                        <List  >
+                            {data.child.map((childData) => (
+                                    <ListItem key={data.id}>
+                                        <ListItemButton 
+                                            sx={{ pl: 4 }} 
+                                            LinkComponent={CNavLink} 
+                                            to={childData?.url}
+                                        >
+                                            <ListItemText primary={childData.name}/>
+                                        </ListItemButton>
+                                    </ListItem>
+                                )
+                            )}
+                        </List>
+                        </Collapse>
+                    </>
+
+                )
+
+            }
+        }
+                
+
             )
-        )
+        
     }
 
   return (

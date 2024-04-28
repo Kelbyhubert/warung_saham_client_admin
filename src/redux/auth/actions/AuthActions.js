@@ -16,8 +16,8 @@ export const loginAction = createAsyncThunk(('auth/loginAction'),
         }
 
         if(res.status == 200){
-            localStorage.setItem("TOKEN", `Bearer ${res.data.token}`);
-            const data = jwtDecode(res.data.token);
+            localStorage.setItem("TOKEN", `Bearer ${res.data.data.token}`);
+            const data = jwtDecode(res.data.data.token);
             payload = {
                 isLogin: true,
                 user: data.user,

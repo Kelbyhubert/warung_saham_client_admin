@@ -1,10 +1,23 @@
 import { secureAxios } from '../../utils/CustomAxios/CustomAxios';
 
-export const getAllRekom = async (pageIndex, size) => {
+export const getAllRekom = async (pageIndex, size, filter) => {
+
+    const filterData = {
+        code: filter?.code || '',
+        fromDate : filter?.fromDate || '',
+        endDate : filter?.endDate || '',
+    };
     try {
          const config = {
             method: "GET",
-            url: `/rekom?index=${pageIndex}&size=${size}&search=`,
+            url: `/rekom`,
+            params: {
+                index: pageIndex,
+                size: size,
+                code: filterData.code,
+                fromDate: filterData.fromDate,
+                endDate: filterData.endDate
+            }
          }
         
         const res = await secureAxios(config);

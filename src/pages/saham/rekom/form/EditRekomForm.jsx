@@ -43,8 +43,8 @@ const EditRekomForm = () => {
                 const fetchStockList = async () => {
                     const res = await getStockList(e.input);
                     if(res.status === 200){
-                        setStockList(res.data);
-                        if(e.isInitial) setStockCode(res.data[0]);
+                        setStockList(res.data.data);
+                        if(e.isInitial) setStockCode(res.data.data[0]);
                     }else{
                         setStockList([]);
                         if(e.isInitial) setStockCode("");
@@ -55,8 +55,7 @@ const EditRekomForm = () => {
     
               }
               , 400) 
-        },
-        [],
+        },[],
     );
     
     //stockCode
@@ -97,7 +96,7 @@ const EditRekomForm = () => {
                     targetFrom: updateTarget.targetFrom,
                     targetTo: updateTarget.targetTo, 
                     status: updateTarget.status, 
-                    order: updateTarget.order
+                    orders: updateTarget.order
                 }
             }else{
                 return data;

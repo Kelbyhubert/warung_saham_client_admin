@@ -5,7 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import React from 'react'
-import { StyledTableCell } from '../custom/table/CTable';
+import { StyledTableCell } from '../custom/table/CTableStyled';
 import PropTypes from "prop-types";
 
 
@@ -18,7 +18,7 @@ const RekomTargetTable = (props) => {
     const [targetFrom, setTargetFrom] = React.useState(0);
     const [targetTo, setTargetTo] = React.useState(0);
     const [status , setStatus] = React.useState(0);
-    const [order,setOrder] = React.useState(0);
+    const [orders,setOrders] = React.useState(0);
 
 
     const actionHandler = (action,data,index) => {
@@ -26,12 +26,12 @@ const RekomTargetTable = (props) => {
         if(action === "open"){
             setTargetFrom(data.targetFrom);
             setTargetTo(data.targetTo);
-            setOrder(data.order);
+            setOrders(data.orders);
             setStatus(data.status);
         }else{
             setTargetFrom(0);
             setTargetTo(0);
-            setOrder(0);
+            setOrders(0);
             setCreateMode(false);
         }
     }
@@ -41,7 +41,7 @@ const RekomTargetTable = (props) => {
             index: indexEditMode,
             targetFrom,
             targetTo,
-            order,
+            orders,
             status
         }
         props.updateTargetHandler(targetData);
@@ -56,7 +56,7 @@ const RekomTargetTable = (props) => {
             targetFrom: data.targetFrom,
             targetTo: data.targetTo,
             status: data.status === 0 ? 1 : 0,
-            order: data.order,
+            orders: data.orders,
         }
         props.updateTargetHandler(targetData);
     }
@@ -68,7 +68,7 @@ const RekomTargetTable = (props) => {
             targetFrom,
             targetTo,
             status: 0,
-            order,
+            orders,
         }
         props.createNewTargetHandler(targetData)
         setCreateMode(false)
@@ -151,9 +151,9 @@ const RekomTargetTable = (props) => {
                             </StyledTableCell>
                             <StyledTableCell>
                                 {indexEditMode == index ? 
-                                <TextField sx={{width: 80,paddingX:2 }} type='number' variant='outlined' value={order} onChange={e => setOrder(e.target.value)}/>
+                                <TextField sx={{width: 80,paddingX:2 }} type='number' variant='outlined' value={orders} onChange={e => setOrders(e.target.value)}/>
                                 : 
-                                <p>{data?.order}</p>
+                                <p>{data?.orders}</p>
                                 }
                             </StyledTableCell>
                             <StyledTableCell>
@@ -178,7 +178,7 @@ const RekomTargetTable = (props) => {
                             </Box>
                         </StyledTableCell>
                         <StyledTableCell>
-                            <TextField sx={{width: 80,paddingX:2 }} type='number' variant='outlined' value={order} onChange={e => setOrder(e.target.value)}/>
+                            <TextField sx={{width: 80,paddingX:2 }} type='number' variant='outlined' value={orders} onChange={e => setOrders(e.target.value)}/>
                         </StyledTableCell>
                         <StyledTableCell>
                                 <Checkbox disabled/>

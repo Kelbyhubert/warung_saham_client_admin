@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getUserByUserId } from '../../../services/User/UserService';
+import { getUserByUserId, updateUser } from '../../../services/User/UserService';
 import { Grid, Typography,Checkbox, Autocomplete, TextField, Box, Toolbar, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Tabs, Tab } from '@mui/material';
 import { getAllRole } from '../../../services/role/Role';
 import PremiumFormDialog from './PremiumFormDialog';
@@ -51,13 +51,26 @@ const UserSetting = () => {
       setRoles(newValue);
     }
 
+    const saveHandler = async () => {
+      const data = roles.map(role => role.id);
+      const payload = {
+        roleIdList: data
+      }
+      const res = await updateUser(userId,payload);
+      if(res.status === 200){
+        navigate("/user-management");
+      }else{
+        console.log("something went wrong");
+      }
+    }
+
      
      useEffect(() => {
       const fetchUser = async () => {
         const res = await getUserByUserId(userId);
 
         if(res.status === 200){
-          const user = res.data;
+          const user = res.data.data;
           setUserData(user);
           setRoles(user.roles)
           setUserPremiumList(user.premiumSubList);
@@ -106,7 +119,7 @@ const UserSetting = () => {
             <Box>
               <Toolbar>
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}><Typography variant='h5'> User Detail </Typography></Box>
-                <Button variant='contained'>Save</Button>
+                <Button variant='contained' onClick={saveHandler}>Save</Button>
               </Toolbar>
               <Grid container spacing={2} padding={4}>
                 <Grid item xs={1.5}>

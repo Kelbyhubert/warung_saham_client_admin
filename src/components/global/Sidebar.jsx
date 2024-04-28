@@ -1,5 +1,5 @@
 import { Collapse, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, useTheme } from '@mui/material'
-import React, { useState } from 'react'
+import React from 'react'
 import CNavLink from '../custom/navlink/CNavLink';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
@@ -17,8 +17,8 @@ const Sidebar = () => {
         {id: 4, name: "User Management" , url: 'user-management', child: []}
     ];
 
-    const [menuList, setMenuList] = useState(dummyMenu);
-    const [openMenuId,setOpenMenuId] = useState(-1);
+    const [menuList, setMenuList] = React.useState(dummyMenu);
+    const [openMenuId,setOpenMenuId] = React.useState(-1);
 
     const handleClickMenu = (index) => {
         if(index === openMenuId){
@@ -46,7 +46,7 @@ const Sidebar = () => {
             }else{
                 return (
                     <>
-                        <ListItem key={data.id}>
+                        <ListItem key={data.name}>
                             <ListItemButton LinkComponent={CNavLink} onClick={() => handleClickMenu(data.id)}>
                                 <ListItemText primary={data.name}/>
                                 {openMenuId === data.id ? <ExpandMore/> : <ExpandLess/>}
@@ -55,7 +55,7 @@ const Sidebar = () => {
                         <Collapse in={openMenuId === data.id} timeout="auto" unmountOnExit>
                         <List  >
                             {data.child.map((childData) => (
-                                    <ListItem key={data.id}>
+                                    <ListItem key={data.name + "/" + childData.name}>
                                         <ListItemButton 
                                             sx={{ pl: 4 }} 
                                             LinkComponent={CNavLink} 

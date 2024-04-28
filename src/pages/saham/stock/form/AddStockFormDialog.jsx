@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Proptypes from 'prop-types';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { createNewStock } from '../../../../services/stock/stockService';
@@ -49,10 +49,6 @@ const AddStockFormDialog = (props) => {
             console.log("something when wrong");
         }
     }
-
-    // useEffect(() =>{
-
-    // }, []);
 
   return (
     <Dialog

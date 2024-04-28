@@ -35,7 +35,13 @@ export const getStockListPage = async (index,size,search,filter) => {
     try {
         const config = {
            method: "GET",
-           url: `/stock/pageable?index=${index}&size=${size}&search=${search}&filter=${filter}`,
+           url: `/stock/pageable`,
+           params:{
+            index,
+            size,
+            search,
+            filter
+           }
         }
        
        const res = await secureAxios(config);

@@ -1,10 +1,13 @@
-import { Box, Button, Divider, IconButton, Paper, Table, TableBody, TableContainer, TableHead, TablePagination, TableRow, Toolbar, Typography } from '@mui/material'
+import { Box, Button, Divider, IconButton, Paper, Table, TableBody, TableContainer, TableHead, TablePagination, TableRow, Toolbar, Typography, alpha, debounce, styled } from '@mui/material'
 import React, { useEffect } from 'react';
 import ModeIcon from '@mui/icons-material/Mode';
 import { useNavigate } from 'react-router-dom';
-import { StyledTableCell } from '../../../components/custom/table/CTable';
+import { StyledTableCell } from '../../../components/custom/table/CTableStyled';
 import AddStockFormDialog from './form/AddStockFormDialog';
 import { getStockListPage } from '../../../services/stock/stockService';
+import SearchIcon from '@mui/icons-material/Search';
+import { StyledInputBase } from '../../../components/custom/input/CustomStyleInput';
+
 
 const dummyData = [
   {stockCode: "CUAN",company: "PT Petrindo Jaya Kreasi Tbk",sector: "Tambang"},
@@ -12,6 +15,31 @@ const dummyData = [
   {stockCode: "CUAN",company: "PT Petrindo Jaya Kreasi Tbk",sector: "Tambang"},
   {stockCode: "CUAN",company: "PT Petrindo Jaya Kreasi Tbk",sector: "Tambang"},
 ]
+
+const Search = styled('div')(({ theme }) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(1),
+        width: 'auto',
+    },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}));
 
 const Stock = () => {
 
@@ -30,6 +58,7 @@ const Stock = () => {
     const [rowPerPage, setRowPerPage] = React.useState(5);
     const [totalData, setTotalData] = React.useState(0);
     const [openDialog,setOpenDialog] = React.useState(false);
+    const [searchValue, setSearchValue] = React.useState('');
 
     const actionHandler = (type,id) => {
         if(type === "add"){
@@ -41,6 +70,19 @@ const Stock = () => {
         }
 
     }
+
+    const search = React.useMemo(
+        () => {
+            return debounce(e => {
+                if(e.input.length > 2){
+                    setSearchValue(e.input);
+                }else{
+                    console.log(e.input);
+                    setSearchValue('');
+                }
+            },400)
+        },[]
+    )
 
     const handleDialog = (e) => {
         setOpenDialog(e);
@@ -66,10 +108,10 @@ const Stock = () => {
         // buttuh refactor terkait rerender antara child dan parent
     useEffect(() => {
         const getStocksPage = async () => {
-            const res = await getStockListPage(page,rowPerPage,"","");
+            const res = await getStockListPage(page,rowPerPage,searchValue,"");
             if(res.status === 200){
-                setStockList(res.data.content);
-                setTotalData(res.data.totalElements);
+                setStockList(res.data.data.content);
+                setTotalData(res.data.data.totalElements);
             }else{
                 setPage(0);
                 setTotalData(0);
@@ -82,7 +124,7 @@ const Stock = () => {
             getStocksPage();
         }
         
-    },[page,rowPerPage,openDialog]);
+    },[page,rowPerPage,openDialog,searchValue]);
 
   return (
     <>
@@ -91,13 +133,17 @@ const Stock = () => {
             <Divider/>
             <Toolbar>
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}/>    
-                <Button
-                    sx={{marginLeft: 2, width: '200px'}}
-                    onClick={() => {}}
-                    variant='outlined'  
-                >
-                    Filter
-                </Button>
+                <Search>
+                    <SearchIconWrapper>
+                        <SearchIcon />
+                    </SearchIconWrapper>
+
+                    <StyledInputBase
+                    placeholder="Search..."
+                    onChange={e => search({input: e.target.value})}
+                    inputProps={{ 'aria-label': 'search', }}
+                    />
+                </Search>
                 <Button
                     sx={{marginLeft: 2, width: '200px'}}
                     onClick={() => actionHandler("add",null)}

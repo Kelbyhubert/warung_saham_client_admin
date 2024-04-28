@@ -41,8 +41,8 @@ const CreateRekomForm = () => {
                 const fetchStockList = async () => {
                     const res = await getStockList(e.input);
                     if(res.status === 200){
-                        setStockList(res.data);
-                        if(e.isInitial) setStockCode(res.data[0]);
+                        setStockList(res.data.data);
+                        if(e.isInitial) setStockCode(res.data.data[0]);
                     }else{
                         setStockList([]);
                         if(e.isInitial) setStockCode("");
@@ -92,7 +92,7 @@ const CreateRekomForm = () => {
     const updateTargetHandler = (updateTarget) => {
         const updatedTargets = targets.map((data,index) => {
             if(updateTarget.index === index){
-                return {id: 0, targetFrom: updateTarget.targetFrom, targetTo: updateTarget.targetTo, order: updateTarget.order}
+                return {id: 0, targetFrom: updateTarget.targetFrom, targetTo: updateTarget.targetTo, orders: updateTarget.order}
             }else{
                 return data;
             }

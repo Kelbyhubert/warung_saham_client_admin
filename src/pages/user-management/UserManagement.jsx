@@ -1,11 +1,12 @@
-import { Box, Table, TableBody, TableContainer, TableHead, TableRow , TablePagination, IconButton , Toolbar, Paper, Button, Typography, Divider, InputBase } from '@mui/material';
+import { Box, Table, TableBody, TableContainer, TableHead, TableRow , TablePagination, IconButton , Toolbar, Paper, Button, Typography, Divider, debounce } from '@mui/material';
 import {alpha, styled} from '@mui/material/styles';
 import SettingsIcon from '@mui/icons-material/Settings';
 import React, { useEffect } from 'react'
 import { getAllUser } from '../../services/User/UserService';
 import { useNavigate } from 'react-router-dom';
-import { StyledTableCell } from '../../components/custom/table/CTable'
+import { StyledTableCell } from '../../components/custom/table/CTableStyled'
 import SearchIcon from '@mui/icons-material/Search';
+import { StyledInputBase } from '../../components/custom/input/CustomStyleInput';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -33,15 +34,6 @@ alignItems: 'center',
 justifyContent: 'center',
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    width: '100%',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    },
-}));
 
 
 const dummyData = [
@@ -69,10 +61,11 @@ const UserManagement = () => {
 
     const navigate = useNavigate();
 
-    const [userList, setuserList] = React.useState(dummyData);
+    const [userList, setUserList] = React.useState(dummyData);
     const [page, setPage] = React.useState(0);
     const [rowPerPage, setRowPerPage] = React.useState(5);
     const [totalData, setTotalData] = React.useState(0);
+    const [searchValue, setSearchValue] = React.useState('');
 
     const header = [
         {id: "index", label: "NO"},
@@ -81,6 +74,19 @@ const UserManagement = () => {
         {id: "phoneNumber", label: "Phone Number"},
         {id: "action", label: "Action"},
     ];
+
+    const search = React.useMemo(
+        () => {
+            return debounce(e => {
+                if(e.input.length > 2){
+                    setSearchValue(e.input);
+                }else{
+                    console.log(e.input);
+                    setSearchValue('');
+                }
+            },400)
+        },[]
+    )
 
 
     const handleChangePage = (e, newPage) => {
@@ -113,12 +119,12 @@ const UserManagement = () => {
 
     useEffect(() => {
         const getUserList = async () => {
-            const res = await getAllUser(page,rowPerPage);
-            setuserList(res.data.content);
-            setTotalData(res.data.totalElements);
+            const res = await getAllUser(page,rowPerPage, searchValue);
+            setUserList(res.data.data.content);
+            setTotalData(res.data.data.totalElements);
         }
         getUserList();
-    },[page,rowPerPage])
+    },[page,rowPerPage,searchValue])
 
 
   return (
@@ -136,6 +142,7 @@ const UserManagement = () => {
 
                 <StyledInputBase
                 placeholder="Search..."
+                onChange={e => search({input: e.target.value})}
                 inputProps={{ 'aria-label': 'search', }}
                 />
             </Search>
@@ -161,7 +168,7 @@ const UserManagement = () => {
                     </TableHead>
                     <TableBody>
                         {userList.map((data,index) => (
-                            <TableRow key={index} >
+                            <TableRow key={data?.userId} >
                                 <StyledTableCell >
                                     {index + 1 + (page * rowPerPage)}
                                 </StyledTableCell>

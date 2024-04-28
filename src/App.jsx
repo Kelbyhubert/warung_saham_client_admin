@@ -21,6 +21,9 @@ import CreateRekomForm from './pages/saham/rekom/form/CreateRekomForm';
 import EditRekomForm from './pages/saham/rekom/form/EditRekomForm';
 import Stock from './pages/saham/stock/Stock';
 import { useDispatch } from 'react-redux';
+import Insight from './pages/insight/Insight';
+import CreateInsightForm from './pages/insight/form/CreateInsightForm';
+import EditInsightForm from './pages/insight/form/EditInsightForm';
 
 const theme = createTheme({
   palette: {
@@ -104,7 +107,17 @@ function App() {
         },
         {
           path: "insight",
-          element: <Dashboard />,
+          element: <Insight />,
+          loader: checkAuthToken(dispatch),
+        },
+        {
+          path: "insight/create",
+          element: <CreateInsightForm />,
+          loader: checkAuthToken(dispatch),
+        },
+        {
+          path: "insight/:id/edit",
+          element: <EditInsightForm />,
           loader: checkAuthToken(dispatch),
         },
         {
@@ -135,14 +148,14 @@ function App() {
   ])
 
   return (
-    <>
+
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ThemeProvider theme={theme}>
         <RouterProvider router={router} />
       </ThemeProvider> 
     </LocalizationProvider>
 
-    </>
+
 
   )
 }

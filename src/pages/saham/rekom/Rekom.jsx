@@ -3,8 +3,9 @@ import React, { useEffect } from 'react';
 import ModeIcon from '@mui/icons-material/Mode';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
-import { StyledTableCell } from '../../../components/custom/table/CTable';
+import { StyledTableCell } from '../../../components/custom/table/CTableStyled';
 import { deleteRekom, getAllRekom } from '../../../services/rekom/RekomService';
+import FilterFormDialog from './form/FilterFormDialog';
 
 
 
@@ -27,6 +28,7 @@ const Rekom = () => {
     const [page, setPage] = React.useState(0);
     const [rowPerPage, setRowPerPage] = React.useState(5);
     const [totalData, setTotalData] = React.useState(0);
+    const [openDialog,setOpenDialog] = React.useState(false);
 
     const actionHandler = (type,id) => {
         if(type === "create"){
@@ -52,13 +54,31 @@ const Rekom = () => {
         setPage(0);
     }
 
+    const handleDialog = (e) => {
+        setOpenDialog(e);
+      }
+
     const handleDeleteRekom = async (id) => {
         const res = await deleteRekom(id);
-        getUserList();
+        if(res.status === 200){
+            getRekomList();
+        }
+        
     }
+
+    const filterHandler = (code, fromDate,endDate) => {
+        const filterData = {
+          code,
+          fromDate,
+          endDate
+        }
+    
+        getRekomList(filterData);
+      }
 
     const actionTemplate = (data) => (
         <Box>
+            
             <IconButton key={data.id} onClick={() => actionHandler("edit" ,data.id)}>
                 <ModeIcon />
             </IconButton>
@@ -73,98 +93,101 @@ const Rekom = () => {
         return <p> {date} </p> 
      }
 
-     const getUserList = async () => {
-        const res = await getAllRekom(page,rowPerPage);
+     const getRekomList = React.useCallback(async (filter) => {
+        const res = await getAllRekom(page,rowPerPage, filter);
         setRekomList(res.data.data.content);
         setTotalData(res.data.data.totalElements);
-    }
+    }, [])
 
      useEffect(() => {
-        getUserList();
-    },[page,rowPerPage]);
+        getRekomList();
+    },[page,rowPerPage,getRekomList]);
 
     
 
   return (
-    <Box>
-        <Typography variant='h3' component="h2">Rekomendasi Saham</Typography>
-        <Divider/>
-        <Toolbar>
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}/>    
-            <Button
-                sx={{marginLeft: 2, width: '200px'}}
-                onClick={() => {}}
-                variant='outlined'  
-            >
-                Filter
-            </Button>
-            <Button
-                sx={{marginLeft: 2, width: '200px'}}
-                onClick={() => actionHandler("create",null)}
-                variant='contained'
-            >
-                Create New Rekom
-            </Button>
-        </Toolbar>
+    <>
+        <Box>
+            <Typography variant='h3' component="h2">Rekomendasi Saham</Typography>
+            <Divider/>
+            <Toolbar>
+                <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}/>    
+                <Button
+                    sx={{marginLeft: 2, width: '200px'}}
+                    onClick={() => setOpenDialog(true)}
+                    variant='outlined'  
+                >
+                    Filter
+                </Button>
+                <Button
+                    sx={{marginLeft: 2, width: '200px'}}
+                    onClick={() => actionHandler("create",null)}
+                    variant='contained'
+                >
+                    Create New Rekom
+                </Button>
+            </Toolbar>
 
-        <Paper elevation={2} sx={{margin: 2}}>
-            <TableContainer sx={{height: 400}}>
-                <Table stickyHeader>
-                    <TableHead>
-                        {header.map((column) => (
-                                <StyledTableCell key={column.id}>
-                                    {column.label}
-                                </StyledTableCell>
-                            ))}
-                    </TableHead>
-                    <TableBody>
-                        
-                        {rekomList.length > 0 ? 
-                            rekomList.map((data,index) => (
-                                <TableRow key={data.id}>
-                                    <StyledTableCell>
-                                        {index + 1 + (page * rowPerPage)}
+            <Paper elevation={2} sx={{margin: 2}}>
+                <TableContainer sx={{height: 400}}>
+                    <Table stickyHeader>
+                        <TableHead>
+                            {header.map((column) => (
+                                    <StyledTableCell key={column.id}>
+                                        {column.label}
                                     </StyledTableCell>
-                                    <StyledTableCell>
-                                        {data.stockCode}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {dateTemplate(data.rekomDate)}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {data.entryFrom} - {data.entryTo}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {data.target}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {data.stopLoss}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {data.rekomType}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {actionTemplate(data)}
-                                    </StyledTableCell>
-                                </TableRow>
-                            ))
-                            :
-                            <p>No Data</p>
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination 
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={totalData}
-                rowsPerPage={rowPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </Paper>
-    </Box>
+                                ))}
+                        </TableHead>
+                        <TableBody>
+                            
+                            {rekomList.length > 0 ? 
+                                rekomList.map((data,index) => (
+                                    <TableRow key={data.id}>
+                                        <StyledTableCell>
+                                            {index + 1 + (page * rowPerPage)}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {data.stockCode}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {dateTemplate(data.rekomDate)}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {data.entryFrom} - {data.entryTo}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {data.target}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {data.stopLoss}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {data.rekomType}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {actionTemplate(data)}
+                                        </StyledTableCell>
+                                    </TableRow>
+                                ))
+                                :
+                                <p>No Data</p>
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination 
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={totalData}
+                    rowsPerPage={rowPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </Paper>
+        </Box>
+        <FilterFormDialog open={openDialog} handleDialog={handleDialog} onSubmit={filterHandler}/>
+    </>
 
   )
 }

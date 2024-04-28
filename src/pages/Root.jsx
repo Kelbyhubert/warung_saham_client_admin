@@ -34,7 +34,6 @@ const Root = () => {
                 </Box>
                 <Footer />
             </Box>
-
         </>
       )
 }

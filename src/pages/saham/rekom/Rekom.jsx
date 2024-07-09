@@ -97,10 +97,10 @@ const Rekom = () => {
         const res = await getAllRekom(page,rowPerPage, filter);
         setRekomList(res.data.data.content);
         setTotalData(res.data.data.totalElements);
-    }, [])
+    }, [page,rowPerPage])
 
      useEffect(() => {
-        getRekomList();
+        getRekomList(null);
     },[page,rowPerPage,getRekomList]);
 
     

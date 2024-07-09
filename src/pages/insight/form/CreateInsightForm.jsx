@@ -14,8 +14,7 @@ const CreateInsightForm = () => {
     const [title,setTitle] = React.useState('');
     const [thumbnail,setThumbnail] = React.useState('');
     const [contentValue, setContentValue] = React.useState('');
-
-    
+ 
     const imgUploadHandler = (event) => {
         const file = event.target.files[0];
         let reader = new FileReader();
@@ -44,7 +43,6 @@ const CreateInsightForm = () => {
         }
 
         reader.readAsDataURL(file);
-
 
     }
 
